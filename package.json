@@ -1,6 +1,6 @@
 {
   "name": "@cao-mei-you-ren/json5conv-cli",
-  "version": "1.0.1-beta.0",
+  "version": "1.1.0",
   "description": "Command-line JSON5 to JSON converter",
   "author": "CaoMeiYouRen",
   "license": "MIT",
