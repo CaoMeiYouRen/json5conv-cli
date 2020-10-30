@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 const fs = require(`fs`)
-const {resolve} = require(`path`)
-const {parse} = require(`json5`)
+const { resolve } = require(`path`)
+const { parse } = require(`json5`)
 const yargs = require(`yargs`)
 const split = require(`split`)
 const utf8 = require(`utf8-stream`)
@@ -24,21 +24,31 @@ const argv = yargs
       alias: `line-by-line`,
       describe: `Parse each line as a separate input`,
       type: `boolean`
+    },
+    o: {
+      alias: `output`,
+      describe: `Output file`,
+      type: `string`
     }
   })
-  .help()
-  .argv
+  .help().argv
 
 /* eslint-disable no-console */
 const parseBuf = buf => {
   const bufStr = buf.toString()
 
   if (bufStr) {
-    const output = JSON.stringify(parse(bufStr))
-    console.log(output);
-    return output;
+    const output = JSON.stringify(parse(bufStr), null, 4)
+
+    if (argv.o) {
+      fs.writeFileSync(resolve(argv.f), output)
+    } else {
+      console.log(output)
+    }
+
+    return output
   }
-};
+}
 /* eslint-enable no-console */
 
 const parseStream = stream =>
@@ -46,14 +56,14 @@ const parseStream = stream =>
     .pipe(utf8())
     // Use utf8 effectively as a noop
     .pipe(argv.L ? split() : utf8())
-    .pipe(argv.L ? map(parseBuf) : concat(parseBuf));
+    .pipe(argv.L ? map(parseBuf) : concat(parseBuf))
 
 if (!process.stdin.isTTY) {
-  parseStream(process.stdin);
+  parseStream(process.stdin)
 } else if (argv.file) {
-  parseStream(fs.createReadStream(resolve(argv.file), `utf8`));
+  parseStream(fs.createReadStream(resolve(argv.f), `utf8`))
 } else {
-  yargs.showHelp();
+  yargs.showHelp()
 }
 
-module.exports = {parseBuf}
+module.exports = { parseBuf }
