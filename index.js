@@ -41,7 +41,8 @@ const parseBuf = buf => {
     const output = JSON.stringify(parse(bufStr), null, 4)
 
     if (argv.o) {
-      fs.writeFileSync(resolve(argv.f), output)
+      fs.writeFileSync(resolve(argv.o), output)
+      console.log(`Output file ${argv.o} successful`)
     } else {
       console.log(output)
     }
